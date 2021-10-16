@@ -1,10 +1,7 @@
 package com.example.passwordwallet.auth.services;
 
-import com.example.passwordwallet.auth.dto.PasswordChangeDto;
+import com.example.passwordwallet.auth.dto.*;
 import com.example.passwordwallet.domain.User;
-import com.example.passwordwallet.auth.dto.PasswordKeyDto;
-import com.example.passwordwallet.auth.dto.TokenResponse;
-import com.example.passwordwallet.auth.dto.UserCredentials;
 
 public interface AuthService {
     TokenResponse getToken(UserCredentials userCredentials);
@@ -14,4 +11,6 @@ public interface AuthService {
     TokenResponse setPasswordKey(PasswordKeyDto passwordKeyDto);
 
     TokenResponse changePassword(PasswordChangeDto passwordChangeDto);
+
+    void createNewAccount(UserDto userDto);
 }

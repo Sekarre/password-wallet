@@ -1,20 +1,21 @@
 package com.example.passwordwallet.auth.services;
 
-import com.example.passwordwallet.auth.dto.PasswordChangeDto;
-import com.example.passwordwallet.auth.dto.PasswordKeyDto;
-import com.example.passwordwallet.auth.dto.TokenResponse;
-import com.example.passwordwallet.auth.dto.UserCredentials;
+import com.example.passwordwallet.auth.dto.*;
 import com.example.passwordwallet.auth.exceptions.BadCredentialException;
+import com.example.passwordwallet.auth.mappers.UserMapper;
 import com.example.passwordwallet.auth.repositories.UserRepository;
+import com.example.passwordwallet.domain.PasswordType;
 import com.example.passwordwallet.domain.User;
 import com.example.passwordwallet.security.JwtTokenUtil;
 import com.example.passwordwallet.security.LoggedUserHelper;
+import com.example.passwordwallet.util.EncryptionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-import static com.example.passwordwallet.util.HashUtil.hashUserPassword;
+import static com.example.passwordwallet.util.HashUtil.*;
+import static com.example.passwordwallet.util.HashUtil.calculateHMAC;
 
 @RequiredArgsConstructor
 @Service
@@ -22,6 +23,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final JwtTokenUtil jwtTokenUtil;
+    private final UserMapper userMapper;
 
     @Override
     public TokenResponse getToken(UserCredentials userCredentials) {
@@ -56,6 +58,18 @@ public class AuthServiceImpl implements AuthService {
         return new TokenResponse(jwtTokenUtil.generateAccessToken(updatedUser));
     }
 
+    @Override
+    public void createNewAccount(UserDto userDto) {
+        User newUser = userMapper.mapUserDtoToUser(userDto);
+        String password = userDto.getPassword();
+        newUser.setSalt(generateRandomSalt());
+        newUser.setPassword(PasswordType.SHA512.equals(userDto.getPasswordType()) ?
+                calculateSHA512(password, generateRandomSalt()) :
+                calculateHMAC(password, EncryptionUtil.encryptPassword(password, password)));
+
+        userRepository.save(newUser);
+    }
+
     private User getUserByLogin(String login) {
         return userRepository.findByLogin(login)
                 .orElseThrow(() -> new BadCredentialException("Bad credentials"));
@@ -63,7 +77,7 @@ public class AuthServiceImpl implements AuthService {
 
     private User updateUserPassword(User user, String hashedPassword) {
         user.setPassword(hashedPassword);
-        user.setSalt(UUID.randomUUID().toString());
+        user.setSalt(generateRandomSalt());
 
         return userRepository.save(user);
     }

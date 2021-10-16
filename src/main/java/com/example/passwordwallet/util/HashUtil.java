@@ -7,6 +7,7 @@ import org.apache.commons.codec.digest.HmacUtils;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.UUID;
 
 import static org.apache.commons.codec.digest.HmacAlgorithms.HMAC_SHA_512;
 
@@ -46,5 +47,9 @@ public class HashUtil {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String generateRandomSalt() {
+        return UUID.randomUUID().toString();
     }
 }

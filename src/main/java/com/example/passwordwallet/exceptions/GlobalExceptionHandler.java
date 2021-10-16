@@ -12,7 +12,13 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(BadCredentialException.class)
-    public ResponseEntity<?> handleNotFoundException(BadCredentialException ex) {
+    public ResponseEntity<?> handleBadCredentialException(BadCredentialException ex) {
+        return ResponseEntity.internalServerError().body(ex.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<?> handleIllegalStateException(IllegalStateException ex) {
         return ResponseEntity.internalServerError().body(ex.getMessage());
     }
 }
