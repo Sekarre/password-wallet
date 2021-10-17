@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.NotBlank;
 
 @Getter
@@ -21,5 +23,6 @@ public class UserDto {
     private String password;
 
     @NotBlank
+    @Enumerated(EnumType.STRING)
     private PasswordType passwordType;
 }

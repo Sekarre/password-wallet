@@ -12,5 +12,7 @@ public interface AuthService {
 
     TokenResponse changePassword(PasswordChangeDto passwordChangeDto);
 
-    void createNewAccount(UserDto userDto);
+    TokenResponse createNewAccount(UserDto userDto);
+
+    UserDto getUserData();
 }

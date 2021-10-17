@@ -1,19 +1,21 @@
 package com.example.passwordwallet.passwords.services.impl;
 
 import com.example.passwordwallet.domain.Password;
+import com.example.passwordwallet.domain.PasswordType;
 import com.example.passwordwallet.domain.User;
-import com.example.passwordwallet.passwords.dto.PasswordDto;
 import com.example.passwordwallet.exceptions.NotFoundException;
+import com.example.passwordwallet.passwords.dto.PasswordDto;
+import com.example.passwordwallet.passwords.dto.PasswordTypeDto;
 import com.example.passwordwallet.passwords.mappers.PasswordMapper;
-import com.example.passwordwallet.passwords.services.PasswordService;
 import com.example.passwordwallet.passwords.repositories.PasswordRepository;
-import com.example.passwordwallet.security.LoggedUserHelper;
+import com.example.passwordwallet.passwords.services.PasswordService;
 import com.example.passwordwallet.util.EncryptionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -28,7 +30,7 @@ public class PasswordServiceImpl implements PasswordService {
     private final PasswordMapper passwordMapper;
 
     @Override
-    public void createPassword(PasswordDto passwordDto) {
+    public Password createPassword(PasswordDto passwordDto) {
 
         if (Objects.isNull(getCurrentUser().getKey())) {
             throw new IllegalStateException("Key must be set to create password");
@@ -36,13 +38,13 @@ public class PasswordServiceImpl implements PasswordService {
 
         Password password = passwordMapper.mapPasswordDtoToPassword(passwordDto);
         password.setUser(getCurrentUser());
-        passwordRepository.save(password);
+        return passwordRepository.save(password);
     }
 
     @Override
-    public void updatePassword(Long passwordId, PasswordDto passwordDto) {
+    public Password updatePassword(Long passwordId, PasswordDto passwordDto) {
         Password password = getPasswordByIdAndUserId(passwordId, getCurrentUser().getId());
-        passwordRepository.save(passwordMapper.mapPasswordDtoToPasswordUpdate(passwordDto, password));
+        return passwordRepository.save(passwordMapper.mapPasswordDtoToPasswordUpdate(passwordDto, password));
     }
 
     @Override
@@ -51,9 +53,10 @@ public class PasswordServiceImpl implements PasswordService {
     }
 
     @Override
-    public Page<PasswordDto> getAllPasswords(Pageable pageable) {
-        return passwordRepository.findAllByUserId(getCurrentUser().getId(), pageable)
-                .map(passwordMapper::mapPasswordToPasswordDto);
+    public List<PasswordDto> getAllPasswords(Pageable pageable) {
+        return passwordRepository.findAllByUserId(getCurrentUser().getId(), pageable).stream()
+                .map(passwordMapper::mapPasswordToPasswordDto)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -68,6 +71,13 @@ public class PasswordServiceImpl implements PasswordService {
         passwordList.forEach(p -> p.setPassword(EncryptionUtil.encryptPassword(p.getPassword(), user.getKey())));
 
         passwordRepository.saveAll(passwordList);
+    }
+
+    @Override
+    public List<PasswordTypeDto> getPasswordTypes() {
+        return Arrays.stream(PasswordType.values())
+                .map(passwordType -> new PasswordTypeDto(passwordType.name()))
+                .collect(Collectors.toList());
     }
 
     private Password getPasswordByIdAndUserId(Long id, Long userId) {

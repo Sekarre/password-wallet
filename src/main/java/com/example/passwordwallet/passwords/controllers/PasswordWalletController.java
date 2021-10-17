@@ -1,14 +1,15 @@
 package com.example.passwordwallet.passwords.controllers;
 
 import com.example.passwordwallet.passwords.dto.PasswordDto;
+import com.example.passwordwallet.passwords.dto.PasswordTypeDto;
 import com.example.passwordwallet.passwords.services.PasswordService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -35,7 +36,7 @@ public class PasswordWalletController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<PasswordDto>> getAllPasswords(Pageable pageable) {
+    public ResponseEntity<List<PasswordDto>> getAllPasswords(Pageable pageable) {
         return ResponseEntity.ok(passwordService.getAllPasswords(pageable));
     }
 
@@ -43,5 +44,10 @@ public class PasswordWalletController {
     public ResponseEntity<?> deletePassword(@PathVariable Long passwordId) {
         passwordService.deletePassword(passwordId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/password-types")
+    public ResponseEntity<List<PasswordTypeDto>> getPasswordTypes() {
+        return ResponseEntity.ok(passwordService.getPasswordTypes());
     }
 }

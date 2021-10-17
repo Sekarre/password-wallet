@@ -1,9 +1,10 @@
-package com.example.passwordwallet.auth.services;
+package com.example.passwordwallet.auth.services.impl;
 
 import com.example.passwordwallet.auth.dto.*;
 import com.example.passwordwallet.auth.exceptions.BadCredentialException;
 import com.example.passwordwallet.auth.mappers.UserMapper;
 import com.example.passwordwallet.auth.repositories.UserRepository;
+import com.example.passwordwallet.auth.services.AuthService;
 import com.example.passwordwallet.domain.PasswordType;
 import com.example.passwordwallet.domain.User;
 import com.example.passwordwallet.security.JwtTokenUtil;
@@ -12,7 +13,6 @@ import com.example.passwordwallet.util.EncryptionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
 
 import static com.example.passwordwallet.util.HashUtil.*;
 import static com.example.passwordwallet.util.HashUtil.calculateHMAC;
@@ -59,7 +59,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void createNewAccount(UserDto userDto) {
+    public TokenResponse createNewAccount(UserDto userDto) {
         User newUser = userMapper.mapUserDtoToUser(userDto);
         String password = userDto.getPassword();
         newUser.setSalt(generateRandomSalt());
@@ -67,7 +67,15 @@ public class AuthServiceImpl implements AuthService {
                 calculateSHA512(password, generateRandomSalt()) :
                 calculateHMAC(password, EncryptionUtil.encryptPassword(password, password)));
 
-        userRepository.save(newUser);
+        User createdUser = userRepository.save(newUser);
+
+        return new TokenResponse(jwtTokenUtil.generateAccessToken(createdUser));
+    }
+
+    @Override
+    public UserDto getUserData() {
+        User currentUser = LoggedUserHelper.getCurrentUser();
+        return new UserDto(currentUser.getLogin(), currentUser.getPassword(), currentUser.getPasswordType());
     }
 
     private User getUserByLogin(String login) {

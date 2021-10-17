@@ -1,20 +1,25 @@
 package com.example.passwordwallet.passwords.services;
 
+import com.example.passwordwallet.domain.Password;
 import com.example.passwordwallet.domain.User;
 import com.example.passwordwallet.passwords.dto.PasswordDto;
-import org.springframework.data.domain.Page;
+import com.example.passwordwallet.passwords.dto.PasswordTypeDto;
 import org.springframework.data.domain.Pageable;
 
-public interface PasswordService {
-    void createPassword(PasswordDto passwordDto);
+import java.util.List;
 
-    void updatePassword(Long passwordId, PasswordDto passwordDto);
+public interface PasswordService {
+    Password createPassword(PasswordDto passwordDto);
+
+    Password updatePassword(Long passwordId, PasswordDto passwordDto);
 
     PasswordDto getPassword(Long passwordId);
 
-    Page<PasswordDto> getAllPasswords(Pageable pageable);
+    List<PasswordDto> getAllPasswords(Pageable pageable);
 
     void deletePassword(Long passwordId);
 
     void updatePasswordsWithNewUser(User user);
+
+    List<PasswordTypeDto> getPasswordTypes();
 }

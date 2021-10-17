@@ -5,10 +5,9 @@ import com.example.passwordwallet.auth.services.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
@@ -18,24 +17,27 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping
-    public ResponseEntity<TokenResponse> generateToken(@RequestBody @Validated UserCredentials userCredentials) {
+    public ResponseEntity<TokenResponse> generateToken(@RequestBody @Valid UserCredentials userCredentials) {
         return ResponseEntity.ok(authService.getToken(userCredentials));
     }
 
     @PostMapping("/key")
-    public ResponseEntity<?> setPasswordKey(@RequestBody @Validated PasswordKeyDto passwordKeyDto) {
+    public ResponseEntity<?> setPasswordKey(@RequestBody @Valid PasswordKeyDto passwordKeyDto) {
         return ResponseEntity.ok(authService.setPasswordKey(passwordKeyDto));
     }
 
     @PostMapping("/password-change")
-    public ResponseEntity<?> changePassword(@RequestBody @Validated PasswordChangeDto passwordChangeDto) {
+    public ResponseEntity<?> changePassword(@RequestBody @Valid PasswordChangeDto passwordChangeDto) {
         return ResponseEntity.ok(authService.changePassword(passwordChangeDto));
     }
 
     @PostMapping("/new-account")
-    public ResponseEntity<?> createNewAccount(@RequestBody @Validated UserDto userDto) {
-        authService.createNewAccount(userDto);
+    public ResponseEntity<TokenResponse> createNewAccount(@RequestBody @Valid UserDto userDto) {
+        return ResponseEntity.ok(authService.createNewAccount(userDto));
+    }
 
-        return ResponseEntity.ok().build();
+    @GetMapping("/user-data")
+    public ResponseEntity<UserDto> getUserData() {
+        return ResponseEntity.ok(authService.getUserData());
     }
 }
