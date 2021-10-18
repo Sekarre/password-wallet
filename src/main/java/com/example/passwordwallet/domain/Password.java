@@ -18,13 +18,17 @@ public class Password {
     private Long id;
 
     @NotBlank
+    private String title;
+
+    @NotBlank
+    private String login;
+
+    @NotBlank
     private String password;
 
     private String webAddress;
 
     private String description;
-
-    private String login;
 
     @JoinColumn(name = "user_id")
     @ManyToOne

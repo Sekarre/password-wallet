@@ -11,6 +11,11 @@ import javax.validation.constraints.NotBlank;
 @Builder
 public class PasswordDto {
 
+    private Long id;
+
+    @NotBlank
+    private String title;
+
     @NotBlank
     private String login;
 

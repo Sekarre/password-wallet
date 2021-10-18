@@ -6,11 +6,16 @@ import com.example.passwordwallet.security.LoggedUserHelper;
 import com.example.passwordwallet.util.EncryptionUtil;
 import org.mapstruct.*;
 
+import java.util.UUID;
+
 @Mapper(builder = @Builder(disableBuilder = true))
 public abstract class PasswordMapper {
 
-    @BeanMapping(qualifiedByName = "decryptPassword")
+    @BeanMapping(qualifiedByName = "randomizePassword")
     public abstract PasswordDto mapPasswordToPasswordDto(Password password);
+
+    @BeanMapping(qualifiedByName = "decryptPassword")
+    public abstract PasswordDto mapPasswordToPasswordDtoWithPassword(Password password);
 
     @BeanMapping(qualifiedByName = "encryptPassword")
     public abstract Password mapPasswordDtoToPassword(PasswordDto passwordDto);
@@ -28,5 +33,11 @@ public abstract class PasswordMapper {
     @AfterMapping
     public void decryptPassword(Password password, @MappingTarget PasswordDto passwordDto) {
         passwordDto.setPassword(EncryptionUtil.decryptPassword(password.getPassword(), LoggedUserHelper.getCurrentUser().getKey()));
+    }
+
+    @Named("randomizePassword")
+    @AfterMapping
+    public void randomizePassword(Password password, @MappingTarget PasswordDto passwordDto) {
+        passwordDto.setPassword(UUID.randomUUID().toString().substring(0, (int) (Math.random() * 10 + 7)));
     }
 }

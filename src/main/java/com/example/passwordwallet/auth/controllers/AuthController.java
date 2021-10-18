@@ -4,7 +4,6 @@ import com.example.passwordwallet.auth.dto.*;
 import com.example.passwordwallet.auth.services.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -17,22 +16,22 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping
-    public ResponseEntity<TokenResponse> generateToken(@RequestBody @Valid UserCredentials userCredentials) {
+    public ResponseEntity<TokenResponse> generateToken(@Valid @RequestBody UserCredentials userCredentials) {
         return ResponseEntity.ok(authService.getToken(userCredentials));
     }
 
     @PostMapping("/key")
-    public ResponseEntity<?> setPasswordKey(@RequestBody @Valid PasswordKeyDto passwordKeyDto) {
+    public ResponseEntity<TokenResponse> setPasswordKey(@Valid @RequestBody PasswordKeyDto passwordKeyDto) {
         return ResponseEntity.ok(authService.setPasswordKey(passwordKeyDto));
     }
 
     @PostMapping("/password-change")
-    public ResponseEntity<?> changePassword(@RequestBody @Valid PasswordChangeDto passwordChangeDto) {
+    public ResponseEntity<TokenResponse> changePassword(@RequestBody @Valid PasswordChangeDto passwordChangeDto) {
         return ResponseEntity.ok(authService.changePassword(passwordChangeDto));
     }
 
     @PostMapping("/new-account")
-    public ResponseEntity<TokenResponse> createNewAccount(@RequestBody @Valid UserDto userDto) {
+    public ResponseEntity<TokenResponse> createNewAccount(@Valid @RequestBody UserDto userDto) {
         return ResponseEntity.ok(authService.createNewAccount(userDto));
     }
 

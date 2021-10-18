@@ -11,7 +11,6 @@ import com.example.passwordwallet.passwords.repositories.PasswordRepository;
 import com.example.passwordwallet.passwords.services.PasswordService;
 import com.example.passwordwallet.util.EncryptionUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +48,7 @@ public class PasswordServiceImpl implements PasswordService {
 
     @Override
     public PasswordDto getPassword(Long passwordId) {
-        return passwordMapper.mapPasswordToPasswordDto(getPasswordByIdAndUserId(passwordId, getCurrentUser().getId()));
+        return passwordMapper.mapPasswordToPasswordDtoWithPassword(getPasswordByIdAndUserId(passwordId, getCurrentUser().getId()));
     }
 
     @Override
