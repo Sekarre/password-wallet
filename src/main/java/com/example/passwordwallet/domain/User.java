@@ -27,7 +27,6 @@ public class User {
     private String password;
 
     @NotBlank
-    @Size(max = 20)
     private String salt;
 
     @Enumerated(EnumType.STRING)

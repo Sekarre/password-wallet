@@ -4,9 +4,8 @@ import com.example.passwordwallet.domain.Password;
 import com.example.passwordwallet.passwords.dto.PasswordDto;
 import com.example.passwordwallet.security.LoggedUserHelper;
 import com.example.passwordwallet.util.EncryptionUtil;
+import com.example.passwordwallet.util.FakePasswordFactory;
 import org.mapstruct.*;
-
-import java.util.UUID;
 
 @Mapper(builder = @Builder(disableBuilder = true))
 public abstract class PasswordMapper {
@@ -38,6 +37,6 @@ public abstract class PasswordMapper {
     @Named("randomizePassword")
     @AfterMapping
     public void randomizePassword(Password password, @MappingTarget PasswordDto passwordDto) {
-        passwordDto.setPassword(UUID.randomUUID().toString().substring(0, (int) (Math.random() * 10 + 7)));
+        passwordDto.setPassword(FakePasswordFactory.buildRandomFakePassword());
     }
 }

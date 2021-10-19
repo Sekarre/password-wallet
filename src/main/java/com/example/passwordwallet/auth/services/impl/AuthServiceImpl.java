@@ -50,10 +50,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public TokenResponse changePassword(PasswordChangeDto passwordChangeDto) {
         User currentUser = getAuthenticatedUser(
-                new UserCredentials(LoggedUserHelper.getCurrentUser().getLogin(), passwordChangeDto.getOldPassword()));
-        String hashedPassword = hashUserPassword(currentUser, passwordChangeDto.getNewPassword());
+                new UserCredentials(LoggedUserHelper.getCurrentUser().getLogin(), passwordChangeDto.getCurrentPassword()));
+        currentUser.setPasswordType(passwordChangeDto.getPasswordType());
 
-        User updatedUser = updateUserPassword(currentUser, hashedPassword);
+        User updatedUser = updateUserPassword(currentUser, passwordChangeDto.getNewPassword());
 
         return new TokenResponse(jwtTokenUtil.generateAccessToken(updatedUser));
     }
@@ -63,9 +63,7 @@ public class AuthServiceImpl implements AuthService {
         User newUser = userMapper.mapUserDtoToUser(userDto);
         String password = userDto.getPassword();
         newUser.setSalt(generateRandomSalt());
-        newUser.setPassword(PasswordType.SHA512.equals(userDto.getPasswordType()) ?
-                calculateSHA512(password, generateRandomSalt()) :
-                calculateHMAC(password, EncryptionUtil.encryptPassword(password, password)));
+        newUser.setPassword(hashUserPassword(newUser, password));
 
         User createdUser = userRepository.save(newUser);
 
@@ -83,9 +81,9 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new BadCredentialException("Bad credentials"));
     }
 
-    private User updateUserPassword(User user, String hashedPassword) {
-        user.setPassword(hashedPassword);
+    private User updateUserPassword(User user, String password) {
         user.setSalt(generateRandomSalt());
+        user.setPassword(hashUserPassword(user, password));
 
         return userRepository.save(user);
     }
