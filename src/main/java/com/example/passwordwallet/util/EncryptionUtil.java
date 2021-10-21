@@ -1,6 +1,7 @@
 package com.example.passwordwallet.util;
 
 import com.example.passwordwallet.auth.exceptions.BadCredentialException;
+import com.example.passwordwallet.exceptions.BadKeyException;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -23,7 +24,7 @@ public class EncryptionUtil {
         try {
             return decrypt(password, generateKey(key));
         } catch (Exception e) {
-            throw new BadCredentialException("decrypt error");
+            throw new BadKeyException("Error while decrypting password - probably wrong key");
         }
     }
 

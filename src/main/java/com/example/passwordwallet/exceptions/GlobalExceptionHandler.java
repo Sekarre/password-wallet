@@ -17,6 +17,12 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(BadKeyException.class)
+    public ResponseEntity<?> handleBadKeyException(BadKeyException ex) {
+        return ResponseEntity.internalServerError().body(ex.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<?> handleIllegalStateException(IllegalStateException ex) {
         return ResponseEntity.internalServerError().body(ex.getMessage());

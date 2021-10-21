@@ -1,5 +1,6 @@
 package com.example.passwordwallet.passwords.controllers;
 
+import com.example.passwordwallet.passwords.dto.PasswordCreateDto;
 import com.example.passwordwallet.passwords.dto.PasswordDto;
 import com.example.passwordwallet.passwords.dto.PasswordTypeDto;
 import com.example.passwordwallet.passwords.services.PasswordService;
@@ -19,7 +20,7 @@ public class PasswordWalletController {
     private final PasswordService passwordService;
 
     @PostMapping
-    public ResponseEntity<?> addNewPassword(@RequestBody @Valid PasswordDto passwordDto) {
+    public ResponseEntity<?> addNewPassword(@RequestBody @Valid PasswordCreateDto passwordDto) {
         passwordService.createPassword(passwordDto);
         return ResponseEntity.ok().build();
     }

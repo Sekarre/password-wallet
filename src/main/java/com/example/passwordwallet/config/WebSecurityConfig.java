@@ -30,7 +30,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/api/auth", "/api/auth/new-account", "/api/password-wallet/password-types").permitAll()
+                .antMatchers("/api/auth", "/api/auth/new-account", "/api/password-wallet/password-types", "/h2-console/*").permitAll()
                 .anyRequest().authenticated()
                 .and().httpBasic()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

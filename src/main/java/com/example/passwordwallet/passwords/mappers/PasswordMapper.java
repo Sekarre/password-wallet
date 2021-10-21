@@ -1,6 +1,7 @@
 package com.example.passwordwallet.passwords.mappers;
 
 import com.example.passwordwallet.domain.Password;
+import com.example.passwordwallet.passwords.dto.PasswordCreateDto;
 import com.example.passwordwallet.passwords.dto.PasswordDto;
 import com.example.passwordwallet.security.LoggedUserHelper;
 import com.example.passwordwallet.util.EncryptionUtil;
@@ -16,8 +17,8 @@ public abstract class PasswordMapper {
     @BeanMapping(qualifiedByName = "decryptPassword")
     public abstract PasswordDto mapPasswordToPasswordDtoWithPassword(Password password);
 
-    @BeanMapping(qualifiedByName = "encryptPassword")
-    public abstract Password mapPasswordDtoToPassword(PasswordDto passwordDto);
+    @BeanMapping(qualifiedByName = "encryptPasswordCreate")
+    public abstract Password mapPasswordDtoToPassword(PasswordCreateDto passwordDto);
 
     @BeanMapping(qualifiedByName = "encryptPassword")
     public abstract Password mapPasswordDtoToPasswordUpdate(PasswordDto passwordDto, @MappingTarget Password password);
@@ -25,6 +26,12 @@ public abstract class PasswordMapper {
     @Named("encryptPassword")
     @AfterMapping
     public void encryptPassword(PasswordDto passwordDto, @MappingTarget Password password) {
+        password.setPassword(EncryptionUtil.encryptPassword(passwordDto.getPassword(), LoggedUserHelper.getCurrentUser().getKey()));
+    }
+
+    @Named("encryptPasswordCreate")
+    @AfterMapping
+    public void encryptPassword(PasswordCreateDto passwordDto, @MappingTarget Password password) {
         password.setPassword(EncryptionUtil.encryptPassword(passwordDto.getPassword(), LoggedUserHelper.getCurrentUser().getKey()));
     }
 
