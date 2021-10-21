@@ -47,6 +47,11 @@ public class PasswordWalletController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/password-key-verification")
+    public ResponseEntity<?> checkIfPasswordKeyValid(@RequestBody String passwordKey) {
+        return ResponseEntity.ok(passwordService.checkIfPasswordKeyValid(passwordKey));
+    }
+
     @GetMapping("/password-types")
     public ResponseEntity<List<PasswordTypeDto>> getPasswordTypes() {
         return ResponseEntity.ok(passwordService.getPasswordTypes());

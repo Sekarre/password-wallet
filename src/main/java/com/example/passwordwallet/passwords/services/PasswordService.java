@@ -18,6 +18,8 @@ public interface PasswordService {
 
     List<PasswordDto> getAllPasswords(Pageable pageable);
 
+    boolean checkIfPasswordKeyValid(String key);
+
     void deletePassword(Long passwordId);
 
     void updatePasswordsWithNewUser(User user);

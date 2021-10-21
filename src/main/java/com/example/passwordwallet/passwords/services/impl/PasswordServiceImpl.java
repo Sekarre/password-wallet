@@ -47,7 +47,7 @@ public class PasswordServiceImpl implements PasswordService {
     public Password updatePassword(Long passwordId, PasswordDto passwordDto) {
         Password password = getPasswordByIdAndUserId(passwordId, getCurrentUser().getId());
 
-        if (isKeyValid(password)) {
+        if (isKeyValid(password, LoggedUserHelper.getCurrentUser().getKey())) {
             return passwordRepository.save(passwordMapper.mapPasswordDtoToPasswordUpdate(passwordDto, password));
         }
 
@@ -58,7 +58,7 @@ public class PasswordServiceImpl implements PasswordService {
     public PasswordDto getPassword(Long passwordId) {
         Password password = getPasswordByIdAndUserId(passwordId, getCurrentUser().getId());
 
-        if (isKeyValid(password)) {
+        if (isKeyValid(password, LoggedUserHelper.getCurrentUser().getKey())) {
             return passwordMapper.mapPasswordToPasswordDtoWithPassword(password);
         }
 
@@ -73,10 +73,23 @@ public class PasswordServiceImpl implements PasswordService {
     }
 
     @Override
+    public boolean checkIfPasswordKeyValid(String key) {
+        List<Password> passwords = passwordRepository.findAllByUserId(getCurrentUser().getId());
+
+        if (!passwords.isEmpty()) {
+            if (passwords.stream().anyMatch(password -> !isKeyValid(password, key))) {
+                throw new BadKeyException("Password key is not valid");
+            }
+        }
+
+        return true;
+    }
+
+    @Override
     public void deletePassword(Long passwordId) {
         Password password = getPasswordByIdAndUserId(passwordId, getCurrentUser().getId());
 
-        if (isKeyValid(password)) {
+        if (isKeyValid(password, LoggedUserHelper.getCurrentUser().getKey())) {
             passwordRepository.delete(password);
         }
 
@@ -98,8 +111,8 @@ public class PasswordServiceImpl implements PasswordService {
                 .collect(Collectors.toList());
     }
 
-    private boolean isKeyValid(Password password) {
-        return !EncryptionUtil.decryptPassword(password.getPassword(), LoggedUserHelper.getCurrentUser().getKey()).isBlank();
+    private boolean isKeyValid(Password password, String key) {
+        return !EncryptionUtil.decryptPassword(password.getPassword(), key).isBlank();
     }
 
     private Password getPasswordByIdAndUserId(Long id, Long userId) {
