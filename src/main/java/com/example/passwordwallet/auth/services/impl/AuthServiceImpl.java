@@ -5,6 +5,7 @@ import com.example.passwordwallet.auth.exceptions.BadCredentialException;
 import com.example.passwordwallet.auth.mappers.UserMapper;
 import com.example.passwordwallet.auth.repositories.UserRepository;
 import com.example.passwordwallet.auth.services.AuthService;
+import com.example.passwordwallet.domain.PasswordType;
 import com.example.passwordwallet.domain.User;
 import com.example.passwordwallet.security.JwtTokenUtil;
 import com.example.passwordwallet.security.LoggedUserHelper;
@@ -70,7 +71,8 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public UserDto getUserData() {
         User currentUser = LoggedUserHelper.getCurrentUser();
-        return new UserDto(currentUser.getLogin(), currentUser.getPassword(), currentUser.getPasswordType());
+
+        return userMapper.mapUserToUserDto(currentUser);
     }
 
     private User getUserByLogin(String login) {
@@ -79,7 +81,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private User updateUserPassword(User user, String password) {
-        user.setSalt(generateRandomSalt());
+        user.setSalt(PasswordType.SHA512.equals(user.getPasswordType()) ? generateRandomSalt() : null);
         user.setPassword(hashUserPassword(user, password));
 
         return userRepository.save(user);

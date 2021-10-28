@@ -26,7 +26,6 @@ public class User {
     @NotBlank
     private String password;
 
-    @NotBlank
     private String salt;
 
     @Enumerated(EnumType.STRING)

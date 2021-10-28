@@ -7,5 +7,8 @@ import org.mapstruct.Mapper;
 
 @Mapper(builder = @Builder(disableBuilder = true))
 public abstract class UserMapper {
+
     public abstract User mapUserDtoToUser(UserDto userDto);
+
+    public abstract UserDto mapUserToUserDto(User user);
 }
