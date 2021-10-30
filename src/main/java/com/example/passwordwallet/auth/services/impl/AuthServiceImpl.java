@@ -39,19 +39,19 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public TokenResponse setPasswordKey(PasswordKeyDto passwordKeyDto) {
+    public TokenResponse setPasswordKey(UserPasswordKeyDto userPasswordKeyDto) {
         User currentUser = LoggedUserHelper.getCurrentUser();
 
-        return new TokenResponse(jwtTokenUtil.generateAccessTokenWithKey(currentUser, passwordKeyDto.getPasswordKey()));
+        return new TokenResponse(jwtTokenUtil.generateAccessTokenWithKey(currentUser, userPasswordKeyDto.getPasswordKey()));
     }
 
     @Override
-    public TokenResponse changePassword(PasswordChangeDto passwordChangeDto) {
+    public TokenResponse changePassword(UserPasswordChangeDto userPasswordChangeDto) {
         User currentUser = getAuthenticatedUser(
-                new UserCredentials(LoggedUserHelper.getCurrentUser().getLogin(), passwordChangeDto.getCurrentPassword()));
-        currentUser.setPasswordType(passwordChangeDto.getPasswordType());
+                new UserCredentials(LoggedUserHelper.getCurrentUser().getLogin(), userPasswordChangeDto.getCurrentPassword()));
+        currentUser.setPasswordType(userPasswordChangeDto.getPasswordType());
 
-        User updatedUser = updateUserPassword(currentUser, passwordChangeDto.getNewPassword());
+        User updatedUser = updateUserPassword(currentUser, userPasswordChangeDto.getNewPassword());
 
         return new TokenResponse(jwtTokenUtil.generateAccessToken(updatedUser));
     }

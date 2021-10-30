@@ -1,14 +1,13 @@
 package com.example.passwordwallet.passwords.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class PasswordTypeDto {
+
     private String name;
 }

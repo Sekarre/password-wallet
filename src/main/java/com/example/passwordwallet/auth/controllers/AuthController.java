@@ -4,12 +4,9 @@ import com.example.passwordwallet.auth.dto.*;
 import com.example.passwordwallet.auth.services.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.security.Principal;
 
 @RequiredArgsConstructor
 @RestController
@@ -24,13 +21,13 @@ public class AuthController {
     }
 
     @PostMapping("/key")
-    public ResponseEntity<TokenResponse> setPasswordKey(@Valid @RequestBody PasswordKeyDto passwordKeyDto) {
-        return ResponseEntity.ok(authService.setPasswordKey(passwordKeyDto));
+    public ResponseEntity<TokenResponse> setPasswordKey(@Valid @RequestBody UserPasswordKeyDto userPasswordKeyDto) {
+        return ResponseEntity.ok(authService.setPasswordKey(userPasswordKeyDto));
     }
 
     @PostMapping("/password-change")
-    public ResponseEntity<TokenResponse> changePassword(@RequestBody @Valid PasswordChangeDto passwordChangeDto) {
-        return ResponseEntity.ok(authService.changePassword(passwordChangeDto));
+    public ResponseEntity<TokenResponse> changePassword(@RequestBody @Valid UserPasswordChangeDto userPasswordChangeDto) {
+        return ResponseEntity.ok(authService.changePassword(userPasswordChangeDto));
     }
 
     @PostMapping("/new-account")

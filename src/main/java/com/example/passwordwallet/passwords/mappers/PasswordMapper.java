@@ -20,6 +20,7 @@ public abstract class PasswordMapper {
     @BeanMapping(qualifiedByName = "encryptPasswordCreate")
     public abstract Password mapPasswordDtoToPassword(PasswordCreateDto passwordDto);
 
+    @Mapping(target = "id", ignore = true)
     @BeanMapping(qualifiedByName = "encryptPassword")
     public abstract Password mapPasswordDtoToPasswordUpdate(PasswordDto passwordDto, @MappingTarget Password password);
 

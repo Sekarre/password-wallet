@@ -11,8 +11,17 @@ import static org.mockito.Mockito.when;
 
 public class SecurityContextMockSetup {
 
-    public void setUp() {
+    public void setUpSecurityContext() {
         User user = buildDefaultUserMock();
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
+
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(user);
+    }
+
+    public void setUpSecurityContext(User user) {
         Authentication authentication = mock(Authentication.class);
         SecurityContext securityContext = mock(SecurityContext.class);
         SecurityContextHolder.setContext(securityContext);

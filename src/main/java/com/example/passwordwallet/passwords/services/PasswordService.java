@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface PasswordService {
+
     Password createPassword(PasswordCreateDto passwordDto);
 
     Password updatePassword(Long passwordId, PasswordDto passwordDto);
@@ -18,7 +19,7 @@ public interface PasswordService {
 
     List<PasswordDto> getAllPasswords(Pageable pageable);
 
-    boolean checkIfPasswordKeyValid(String key);
+    boolean checkIfPasswordKeyValidForAll(String key);
 
     void deletePassword(Long passwordId);
 

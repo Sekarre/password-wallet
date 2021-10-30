@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PasswordChangeDto {
+public class UserPasswordChangeDto {
 
     @NotBlank
     private String currentPassword;

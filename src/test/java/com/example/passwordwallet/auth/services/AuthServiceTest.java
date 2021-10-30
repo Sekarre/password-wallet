@@ -1,10 +1,10 @@
-package com.example.passwordwallet.auth.services.impl;
+package com.example.passwordwallet.auth.services;
 
 import com.example.passwordwallet.SecurityContextMockSetup;
 import com.example.passwordwallet.auth.dto.*;
 import com.example.passwordwallet.auth.mappers.UserMapper;
 import com.example.passwordwallet.auth.repositories.UserRepository;
-import com.example.passwordwallet.auth.services.AuthService;
+import com.example.passwordwallet.auth.services.impl.AuthServiceImpl;
 import com.example.passwordwallet.domain.PasswordType;
 import com.example.passwordwallet.domain.User;
 import com.example.passwordwallet.security.JwtTokenUtil;
@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class AuthServiceImplTest extends SecurityContextMockSetup {
+class AuthServiceTest extends SecurityContextMockSetup {
 
     @Mock
     UserRepository userRepository;
@@ -36,8 +36,8 @@ class AuthServiceImplTest extends SecurityContextMockSetup {
     String tokenValue = "tokenValue";
 
     @BeforeEach
-    public void setUp() {
-        super.setUp();
+    public void setUpSecurityContext() {
+        super.setUpSecurityContext();
         MockitoAnnotations.openMocks(this);
         authService = new AuthServiceImpl(userRepository, jwtTokenUtil, userMapper);
 
@@ -80,11 +80,11 @@ class AuthServiceImplTest extends SecurityContextMockSetup {
     @Test
     void should_set_password_key_if_user_logged_in() {
         //given
-        PasswordKeyDto passwordKeyDto = PasswordKeyDto.builder().passwordKey("key").build();
+        UserPasswordKeyDto userPasswordKeyDto = UserPasswordKeyDto.builder().passwordKey("key").build();
         when(jwtTokenUtil.generateAccessTokenWithKey(any(), any())).thenReturn(tokenValue);
 
         //when
-        TokenResponse tokenResponse = authService.setPasswordKey(passwordKeyDto);
+        TokenResponse tokenResponse = authService.setPasswordKey(userPasswordKeyDto);
 
         //then
         assertNotNull(tokenResponse);
@@ -95,7 +95,7 @@ class AuthServiceImplTest extends SecurityContextMockSetup {
     @Test
     void should_change_password() {
         //given
-        PasswordChangeDto passwordChangeDto = PasswordChangeDto.builder()
+        UserPasswordChangeDto userPasswordChangeDto = UserPasswordChangeDto.builder()
                 .passwordType(PasswordType.SHA512)
                 .newPassword("password2")
                 .currentPassword("password")
@@ -105,7 +105,7 @@ class AuthServiceImplTest extends SecurityContextMockSetup {
         when(jwtTokenUtil.generateAccessToken(any())).thenReturn(tokenValue);
 
         //when
-        TokenResponse token = authService.changePassword(passwordChangeDto);
+        TokenResponse token = authService.changePassword(userPasswordChangeDto);
 
         //then
         assertNotNull(token);

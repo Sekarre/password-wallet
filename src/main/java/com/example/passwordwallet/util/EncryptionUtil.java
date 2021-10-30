@@ -2,6 +2,7 @@ package com.example.passwordwallet.util;
 
 import com.example.passwordwallet.auth.exceptions.BadCredentialException;
 import com.example.passwordwallet.exceptions.BadKeyException;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;

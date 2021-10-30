@@ -49,7 +49,7 @@ public class PasswordWalletController {
 
     @PostMapping("/password-key-verification")
     public ResponseEntity<?> checkIfPasswordKeyValid(@RequestBody String passwordKey) {
-        return ResponseEntity.ok(passwordService.checkIfPasswordKeyValid(passwordKey));
+        return ResponseEntity.ok(passwordService.checkIfPasswordKeyValidForAll(passwordKey));
     }
 
     @GetMapping("/password-types")

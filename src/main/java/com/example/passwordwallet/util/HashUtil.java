@@ -3,6 +3,7 @@ package com.example.passwordwallet.util;
 import com.example.passwordwallet.domain.PasswordType;
 import com.example.passwordwallet.domain.User;
 import org.apache.commons.codec.digest.HmacUtils;
+import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -11,6 +12,7 @@ import java.util.UUID;
 
 import static org.apache.commons.codec.digest.HmacAlgorithms.HMAC_SHA_512;
 
+@Component
 public class HashUtil {
 
     public static String hashUserPassword(User user, String password) {

@@ -10,6 +10,7 @@ import com.example.passwordwallet.passwords.dto.PasswordCreateDto;
 import com.example.passwordwallet.passwords.dto.PasswordTypeDto;
 import com.example.passwordwallet.passwords.mappers.PasswordMapper;
 import com.example.passwordwallet.passwords.repositories.PasswordRepository;
+import com.example.passwordwallet.passwords.services.PasswordKeyValidatorService;
 import com.example.passwordwallet.passwords.services.PasswordService;
 import com.example.passwordwallet.security.LoggedUserHelper;
 import com.example.passwordwallet.util.EncryptionUtil;
@@ -30,6 +31,7 @@ public class PasswordServiceImpl implements PasswordService {
 
     private final PasswordRepository passwordRepository;
     private final PasswordMapper passwordMapper;
+    private final PasswordKeyValidatorService passwordKeyValidatorService;
 
     @Override
     public Password createPassword(PasswordCreateDto passwordDto) {
@@ -40,6 +42,7 @@ public class PasswordServiceImpl implements PasswordService {
 
         Password password = passwordMapper.mapPasswordDtoToPassword(passwordDto);
         password.setUser(getCurrentUser());
+
         return passwordRepository.save(password);
     }
 
@@ -47,7 +50,7 @@ public class PasswordServiceImpl implements PasswordService {
     public Password updatePassword(Long passwordId, PasswordDto passwordDto) {
         Password password = getPasswordByIdAndUserId(passwordId, getCurrentUser().getId());
 
-        if (isKeyValid(password, LoggedUserHelper.getCurrentUser().getKey())) {
+        if (passwordKeyValidatorService.isKeyValid(password, LoggedUserHelper.getCurrentUser().getKey())) {
             return passwordRepository.save(passwordMapper.mapPasswordDtoToPasswordUpdate(passwordDto, password));
         }
 
@@ -58,7 +61,7 @@ public class PasswordServiceImpl implements PasswordService {
     public PasswordDto getPassword(Long passwordId) {
         Password password = getPasswordByIdAndUserId(passwordId, getCurrentUser().getId());
 
-        if (isKeyValid(password, LoggedUserHelper.getCurrentUser().getKey())) {
+        if (passwordKeyValidatorService.isKeyValid(password, LoggedUserHelper.getCurrentUser().getKey())) {
             return passwordMapper.mapPasswordToPasswordDtoWithPassword(password);
         }
 
@@ -73,11 +76,11 @@ public class PasswordServiceImpl implements PasswordService {
     }
 
     @Override
-    public boolean checkIfPasswordKeyValid(String key) {
+    public boolean checkIfPasswordKeyValidForAll(String key) {
         List<Password> passwords = passwordRepository.findAllByUserId(getCurrentUser().getId());
 
         if (!passwords.isEmpty()) {
-            if (passwords.stream().anyMatch(password -> !isKeyValid(password, key))) {
+            if (passwords.stream().anyMatch(password -> !passwordKeyValidatorService.isKeyValid(password, key))) {
                 throw new BadKeyException("Password key is not valid");
             }
         }
@@ -89,8 +92,10 @@ public class PasswordServiceImpl implements PasswordService {
     public void deletePassword(Long passwordId) {
         Password password = getPasswordByIdAndUserId(passwordId, getCurrentUser().getId());
 
-        if (isKeyValid(password, LoggedUserHelper.getCurrentUser().getKey())) {
+        if (passwordKeyValidatorService.isKeyValid(password, LoggedUserHelper.getCurrentUser().getKey())) {
             passwordRepository.delete(password);
+
+            return;
         }
 
         throw new BadKeyException("Bad key");
@@ -109,10 +114,6 @@ public class PasswordServiceImpl implements PasswordService {
         return Arrays.stream(PasswordType.values())
                 .map(passwordType -> new PasswordTypeDto(passwordType.name()))
                 .collect(Collectors.toList());
-    }
-
-    private boolean isKeyValid(Password password, String key) {
-        return !EncryptionUtil.decryptPassword(password.getPassword(), key).isBlank();
     }
 
     private Password getPasswordByIdAndUserId(Long id, Long userId) {

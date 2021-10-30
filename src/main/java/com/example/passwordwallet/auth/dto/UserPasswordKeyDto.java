@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PasswordKeyDto {
+public class UserPasswordKeyDto {
 
     @NotBlank
     private String passwordKey;

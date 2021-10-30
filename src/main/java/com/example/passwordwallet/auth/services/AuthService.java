@@ -8,9 +8,9 @@ public interface AuthService {
 
     User getAuthenticatedUser(UserCredentials userCredentials);
 
-    TokenResponse setPasswordKey(PasswordKeyDto passwordKeyDto);
+    TokenResponse setPasswordKey(UserPasswordKeyDto userPasswordKeyDto);
 
-    TokenResponse changePassword(PasswordChangeDto passwordChangeDto);
+    TokenResponse changePassword(UserPasswordChangeDto userPasswordChangeDto);
 
     TokenResponse createNewAccount(UserDto userDto);
 
