@@ -1,6 +1,6 @@
 package com.example.passwordwallet.util;
 
-import com.example.passwordwallet.domain.PasswordType;
+import com.example.passwordwallet.domain.enums.PasswordType;
 import com.example.passwordwallet.domain.User;
 import org.apache.commons.codec.digest.HmacUtils;
 import org.springframework.stereotype.Component;

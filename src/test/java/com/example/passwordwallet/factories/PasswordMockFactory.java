@@ -1,7 +1,7 @@
 package com.example.passwordwallet.factories;
 
 import com.example.passwordwallet.domain.Password;
-import com.example.passwordwallet.domain.PasswordType;
+import com.example.passwordwallet.domain.enums.PasswordType;
 import com.example.passwordwallet.passwords.dto.PasswordCreateDto;
 import com.example.passwordwallet.passwords.dto.PasswordDto;
 import com.example.passwordwallet.passwords.dto.PasswordTypeDto;

@@ -1,6 +1,6 @@
 package com.example.passwordwallet.bootstrap;
 
-import com.example.passwordwallet.domain.PasswordType;
+import com.example.passwordwallet.domain.enums.PasswordType;
 import com.example.passwordwallet.domain.User;
 import com.example.passwordwallet.auth.repositories.UserRepository;
 import com.example.passwordwallet.util.EncryptionUtil;
@@ -10,7 +10,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
-//@Component
+@Component
 public class DataLoader implements CommandLineRunner {
 
     private final UserRepository userRepository;

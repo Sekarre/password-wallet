@@ -2,10 +2,11 @@ package com.example.passwordwallet.auth.services;
 
 import com.example.passwordwallet.SecurityContextMockSetup;
 import com.example.passwordwallet.auth.dto.*;
+import com.example.passwordwallet.auth.mappers.UserLoginInfoMapper;
 import com.example.passwordwallet.auth.mappers.UserMapper;
 import com.example.passwordwallet.auth.repositories.UserRepository;
 import com.example.passwordwallet.auth.services.impl.AuthServiceImpl;
-import com.example.passwordwallet.domain.PasswordType;
+import com.example.passwordwallet.domain.enums.PasswordType;
 import com.example.passwordwallet.domain.User;
 import com.example.passwordwallet.security.JwtTokenUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +23,15 @@ import static org.mockito.Mockito.*;
 class AuthServiceTest extends SecurityContextMockSetup {
 
     @Mock
+    UserLoginInfoService userLoginInfoService;
+
+    @Mock
+    AccountLockService accountLockService;
+
+    @Mock
+    UserLoginEventService userLoginEventService;
+
+    @Mock
     UserRepository userRepository;
 
     @Mock
@@ -29,6 +39,10 @@ class AuthServiceTest extends SecurityContextMockSetup {
 
     @Mock
     UserMapper userMapper;
+
+    @Mock
+    UserLoginInfoMapper userLoginInfoMapper;
+
 
     AuthService authService;
 
@@ -39,7 +53,7 @@ class AuthServiceTest extends SecurityContextMockSetup {
     public void setUpSecurityContext() {
         super.setUpSecurityContext();
         MockitoAnnotations.openMocks(this);
-        authService = new AuthServiceImpl(userRepository, jwtTokenUtil, userMapper);
+        authService = new AuthServiceImpl(userLoginInfoService, userLoginEventService, accountLockService, userRepository, jwtTokenUtil, userMapper, userLoginInfoMapper);
 
         user = buildDefaultUserMock();
     }

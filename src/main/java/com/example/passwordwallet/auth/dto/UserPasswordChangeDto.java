@@ -1,6 +1,6 @@
 package com.example.passwordwallet.auth.dto;
 
-import com.example.passwordwallet.domain.PasswordType;
+import com.example.passwordwallet.domain.enums.PasswordType;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;

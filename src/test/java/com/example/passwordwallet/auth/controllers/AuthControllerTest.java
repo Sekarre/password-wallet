@@ -40,7 +40,6 @@ class AuthControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(authController)
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
-
     }
 
     @Test

@@ -2,11 +2,13 @@ package com.example.passwordwallet.auth.controllers;
 
 import com.example.passwordwallet.auth.dto.*;
 import com.example.passwordwallet.auth.services.AuthService;
+import com.example.passwordwallet.domain.helper.UserLoginEventByIp;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -38,5 +40,29 @@ public class AuthController {
     @GetMapping("/user-data")
     public ResponseEntity<UserDto> getUserData() {
         return ResponseEntity.ok(authService.getUserData());
+    }
+
+    @GetMapping("/user-login-data")
+    public ResponseEntity<UserLoginInfoDto> getLoginInfoData() {
+        return ResponseEntity.ok(authService.getLoginInfoData());
+    }
+
+    @GetMapping("/user-login-ip-data")
+    public ResponseEntity<List<UserLoginEventByIpDto>> getUserLoginEventsByIp() {
+        return ResponseEntity.ok(authService.getUserLoginEventsByIp());
+    }
+
+    @PatchMapping("/user-ip-ban")
+    public ResponseEntity<?> banUserIp(@RequestParam String userIp) {
+        authService.banUserIp(userIp);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/user-ip-unban")
+    public ResponseEntity<?> unbanUserIp(@RequestParam String userIp) {
+        authService.unbanUserIp(userIp);
+
+        return ResponseEntity.noContent().build();
     }
 }

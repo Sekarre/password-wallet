@@ -4,7 +4,7 @@ import com.example.passwordwallet.auth.dto.UserCredentials;
 import com.example.passwordwallet.auth.dto.UserDto;
 import com.example.passwordwallet.auth.dto.UserPasswordChangeDto;
 import com.example.passwordwallet.auth.dto.UserPasswordKeyDto;
-import com.example.passwordwallet.domain.PasswordType;
+import com.example.passwordwallet.domain.enums.PasswordType;
 import com.example.passwordwallet.domain.User;
 
 public class UserMockFactory {

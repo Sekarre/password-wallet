@@ -1,10 +1,12 @@
 package com.example.passwordwallet.domain;
 
+import com.example.passwordwallet.domain.enums.PasswordType;
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -33,6 +35,9 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Password> passwords;
+
+    @OneToOne(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.REMOVE})
+    private UserLoginInfo userLoginInfo;
 
     @Transient
     private String key;

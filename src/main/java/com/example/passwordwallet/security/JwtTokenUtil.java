@@ -23,7 +23,6 @@ public class JwtTokenUtil {
         Claims claims = Jwts.claims().setSubject(user.getLogin());
 
         return buildToken(user.getLogin(), claims);
-
     }
 
     public String generateAccessTokenWithKey(User user, String key) {

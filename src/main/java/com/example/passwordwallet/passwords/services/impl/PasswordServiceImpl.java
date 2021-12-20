@@ -1,7 +1,7 @@
 package com.example.passwordwallet.passwords.services.impl;
 
 import com.example.passwordwallet.domain.Password;
-import com.example.passwordwallet.domain.PasswordType;
+import com.example.passwordwallet.domain.enums.PasswordType;
 import com.example.passwordwallet.domain.User;
 import com.example.passwordwallet.exceptions.BadKeyException;
 import com.example.passwordwallet.exceptions.NotFoundException;
