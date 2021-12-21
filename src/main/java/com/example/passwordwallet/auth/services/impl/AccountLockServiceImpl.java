@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
@@ -34,15 +35,16 @@ public class AccountLockServiceImpl implements AccountLockService {
             return;
         }
 
-        if (user.getUserLoginInfo().getLockedTo().isAfter(LocalDateTime.now())) {
-            throw new IllegalStateException("Account is still locked");
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        if (user.getUserLoginInfo().getLockedTo().isAfter(currentDateTime)) {
+            throw new IllegalStateException("Account is locked for " + ChronoUnit.SECONDS.between(currentDateTime, user.getUserLoginInfo().getLockedTo()) + " seconds");
         }
     }
 
     @Override
     public void checkIfValidIpAddress(User user) {
         if (isIpBanned(user, HttpReqRespUtils.getClientIpAddressIfServletRequestExist())) {
-            throw new IllegalStateException("Ip address is locked");
+            throw new IllegalStateException("Your ip address has been blocked by user");
         }
     }
 
@@ -54,7 +56,7 @@ public class AccountLockServiceImpl implements AccountLockService {
         Integer secondsToLock = lockSecondsPerFailureCount.get(userLoginInfo.getFailureCount());
 
         if (Objects.isNull(secondsToLock)) {
-            return;
+            secondsToLock = lockSecondsPerFailureCount.get(LockTime.SAYONARA.getFailureCount());
         }
 
         LocalDateTime dateToLockAcc = LocalDateTime.now().plusSeconds(secondsToLock);
@@ -70,6 +72,11 @@ public class AccountLockServiceImpl implements AccountLockService {
 
     @Override
     public void banIpAddress(User user, String ipAddress) {
+
+        if (bannedIpAddressesRepository.findByUserIdAndAddressIp(user.getId(), ipAddress).isPresent()) {
+            throw new IllegalStateException("Ip address already banned");
+        }
+
         bannedIpAddressesRepository.save(BannedIpAddress.builder()
                 .addressIp(ipAddress)
                 .userId(user.getId())
@@ -79,7 +86,7 @@ public class AccountLockServiceImpl implements AccountLockService {
     @Override
     public void unbanIpAddress(User user, String userIp) {
         BannedIpAddress bannedIpAddress = bannedIpAddressesRepository.findByUserIdAndAddressIp(user.getId(), userIp)
-                .orElseThrow(() -> new NotFoundException("Given address doesnt exists: " + userIp));
+                .orElseThrow(() -> new NotFoundException("Given address doesnt exist or is not banned"));
 
         bannedIpAddressesRepository.deleteById(bannedIpAddress.getId());
     }

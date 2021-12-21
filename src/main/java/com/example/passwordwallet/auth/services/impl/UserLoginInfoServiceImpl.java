@@ -39,6 +39,7 @@ public class UserLoginInfoServiceImpl implements UserLoginInfoService {
         userLoginInfo.setLastLoginDate(LocalDateTime.now());
         userLoginInfo.setLastSuccessfulLoginDate(loginSuccessful ? LocalDateTime.now() : userLoginInfo.getLastSuccessfulLoginDate());
         userLoginInfo.getUserLoginEvents().add(userLoginEvent);
+        userLoginInfo.setOldFailureCount(loginSuccessful ? userLoginInfo.getFailureCount() : userLoginInfo.getOldFailureCount());
         userLoginInfo.setFailureCount(loginSuccessful ? 0 : (userLoginInfo.getFailureCount() + 1));
         userLoginEvent.setUserLoginInfo(userLoginInfo);
         return userLoginInfo;
@@ -48,6 +49,7 @@ public class UserLoginInfoServiceImpl implements UserLoginInfoService {
         UserLoginInfo userLoginInfo = UserLoginInfo.builder()
                 .user(user)
                 .failureCount(loginSuccessful ? 0 : 1)
+                .oldFailureCount(0)
                 .lastLoginDate(LocalDateTime.now())
                 .userLoginEvents(new ArrayList<>() {{
                     add(userLoginEvent);

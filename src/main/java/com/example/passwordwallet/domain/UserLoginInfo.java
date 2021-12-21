@@ -22,6 +22,7 @@ public class UserLoginInfo {
     private LocalDateTime lastLoginDate;
     private LocalDateTime lastSuccessfulLoginDate;
     private Integer failureCount;
+    private Integer oldFailureCount;
     private LocalDateTime lockedTo;
 
     @JoinColumn(name = "user_id")
@@ -29,5 +30,6 @@ public class UserLoginInfo {
     private User user;
 
     @OneToMany(mappedBy = "userLoginInfo", fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.REMOVE, CascadeType.PERSIST})
+    @OrderBy("loginDate desc")
     private List<UserLoginEvent> userLoginEvents = new ArrayList<>();
 }
