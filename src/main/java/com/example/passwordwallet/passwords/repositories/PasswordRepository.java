@@ -11,6 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface PasswordRepository extends JpaRepository<Password, Long> {
+
     boolean existsByIdAndUserId(Long id, Long userId);
 
     Optional<Password> findByIdAndUserId(Long id, Long userId);

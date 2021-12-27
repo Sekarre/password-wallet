@@ -26,6 +26,7 @@ public class DataLoader implements CommandLineRunner {
                 .login("user")
                 .password(HashUtil.calculateSHA512("user", "user"))
                 .salt("user")
+                .email("user@email.com")
                 .passwordType(PasswordType.SHA512)
                 .build());
 
@@ -33,6 +34,7 @@ public class DataLoader implements CommandLineRunner {
                 .login("admin")
                 .password(HashUtil.calculateSHA512("admin", "admin"))
                 .salt("admin")
+                .email("admin@email.com")
                 .passwordType(PasswordType.SHA512)
                 .build());
 
@@ -40,6 +42,7 @@ public class DataLoader implements CommandLineRunner {
                 .login("guest")
                 .password(HashUtil.calculateHMAC("guest", EncryptionUtil.encryptPassword("guest", "guest")))
                 .salt("guest")
+                .email("guest@email.com")
                 .passwordType(PasswordType.HMAC)
                 .build());
     }

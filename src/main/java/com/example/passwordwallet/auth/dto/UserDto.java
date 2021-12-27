@@ -22,5 +22,7 @@ public class UserDto {
     @NotNull
     private PasswordType passwordType;
 
+    private String email;
+
     private UserLoginInfoDto userLoginInfoDto;
 }

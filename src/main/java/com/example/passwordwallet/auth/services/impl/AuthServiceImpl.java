@@ -4,17 +4,12 @@ import com.example.passwordwallet.auth.dto.*;
 import com.example.passwordwallet.auth.exceptions.BadCredentialException;
 import com.example.passwordwallet.auth.mappers.UserLoginInfoMapper;
 import com.example.passwordwallet.auth.mappers.UserMapper;
-import com.example.passwordwallet.auth.repositories.UserRepository;
-import com.example.passwordwallet.auth.services.AccountLockService;
-import com.example.passwordwallet.auth.services.AuthService;
-import com.example.passwordwallet.auth.services.UserLoginEventService;
-import com.example.passwordwallet.auth.services.UserLoginInfoService;
+import com.example.passwordwallet.auth.services.*;
 import com.example.passwordwallet.domain.UserLoginInfo;
 import com.example.passwordwallet.domain.enums.PasswordType;
 import com.example.passwordwallet.domain.User;
 import com.example.passwordwallet.domain.helper.UserLoginEventByIp;
 import com.example.passwordwallet.security.JwtTokenUtil;
-import com.example.passwordwallet.security.LoggedUserHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +18,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.example.passwordwallet.security.LoggedUserHelper.getCurrentUser;
-import static com.example.passwordwallet.util.DateUtil.localDateTimeComparator;
 import static com.example.passwordwallet.util.HashUtil.generateRandomSalt;
 import static com.example.passwordwallet.util.HashUtil.hashUserPassword;
 
@@ -34,7 +28,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserLoginInfoService userLoginInfoService;
     private final UserLoginEventService userLoginEventService;
     private final AccountLockService accountLockService;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final JwtTokenUtil jwtTokenUtil;
     private final UserMapper userMapper;
     private final UserLoginInfoMapper userLoginInfoMapper;
@@ -48,13 +42,13 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public User getAuthenticatedUser(UserCredentials userCredentials) {
-        User user = getUserByLogin(userCredentials.getLogin());
+        User user = userService.getUserByLogin(userCredentials.getLogin());
 
         accountLockService.checkIfAccountLocked(user);
         accountLockService.checkIfValidIpAddress(user);
 
         UserLoginInfo userLoginInfo;
-        Optional<User> optionalUser = userRepository.findByLoginAndPassword(userCredentials.getLogin(), hashUserPassword(user, userCredentials.getPassword()));
+        Optional<User> optionalUser = userService.getOptionalUserByLoginAndPassword(userCredentials.getLogin(), hashUserPassword(user, userCredentials.getPassword()));
 
         if (optionalUser.isEmpty()) {
             userLoginInfo = userLoginInfoService.saveLoginInfo(false, user);
@@ -94,7 +88,7 @@ public class AuthServiceImpl implements AuthService {
         newUser.setSalt(generateRandomSalt());
         newUser.setPassword(hashUserPassword(newUser, password));
 
-        User createdUser = userRepository.save(newUser);
+        User createdUser = userService.save(newUser);
 
         return new TokenResponse(jwtTokenUtil.generateAccessToken(createdUser));
     }
@@ -141,15 +135,10 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
-    private User getUserByLogin(String login) {
-        return userRepository.findByLogin(login)
-                .orElseThrow(() -> new BadCredentialException("Bad credentials"));
-    }
-
     private User updateUserPassword(User user, String password) {
         user.setSalt(PasswordType.SHA512.equals(user.getPasswordType()) ? generateRandomSalt() : null);
         user.setPassword(hashUserPassword(user, password));
 
-        return userRepository.save(user);
+        return userService.save(user);
     }
 }

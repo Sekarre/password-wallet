@@ -1,6 +1,7 @@
 package com.example.passwordwallet.passwords.services;
 
 import com.example.passwordwallet.SecurityContextMockSetup;
+import com.example.passwordwallet.auth.services.UserService;
 import com.example.passwordwallet.domain.Password;
 import com.example.passwordwallet.domain.enums.PasswordType;
 import com.example.passwordwallet.domain.User;
@@ -12,6 +13,7 @@ import com.example.passwordwallet.passwords.dto.PasswordDto;
 import com.example.passwordwallet.passwords.dto.PasswordTypeDto;
 import com.example.passwordwallet.passwords.mappers.PasswordMapper;
 import com.example.passwordwallet.passwords.repositories.PasswordRepository;
+import com.example.passwordwallet.passwords.repositories.SharedPasswordRepository;
 import com.example.passwordwallet.passwords.services.impl.PasswordServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,10 +35,16 @@ class PasswordServiceTest extends SecurityContextMockSetup {
     PasswordRepository passwordRepository;
 
     @Mock
+    SharedPasswordService sharedPasswordService;
+
+    @Mock
     PasswordMapper passwordMapper;
 
     @Mock
     PasswordKeyValidatorService passwordKeyValidatorService;
+
+    @Mock
+    UserService userService;
 
     private PasswordService passwordService;
 
@@ -48,7 +56,8 @@ class PasswordServiceTest extends SecurityContextMockSetup {
         MockitoAnnotations.openMocks(this);
 
         password = PasswordMockFactory.buildPasswordMock();
-        passwordService = new PasswordServiceImpl(passwordRepository, passwordMapper, passwordKeyValidatorService);
+        passwordService = new PasswordServiceImpl(passwordRepository, sharedPasswordService, passwordMapper,
+                passwordKeyValidatorService, userService);
     }
 
     @Test
@@ -65,17 +74,6 @@ class PasswordServiceTest extends SecurityContextMockSetup {
         assertNotNull(result);
         verify(passwordRepository, times(1)).save(any());
         verify(passwordMapper, times(1)).mapPasswordDtoToPassword(passwordCreateDto);
-    }
-
-    @Test
-    void should_throw_exception_when_creating_password_if_key_not_set() {
-        //given
-        User user = UserMockFactory.buildDefaultUserMock();
-        user.setKey(null);
-        setUpSecurityContext(user);
-
-        //when + then
-        assertThrows(IllegalStateException.class, () -> passwordService.createPassword(new PasswordCreateDto()));
     }
 
     @Test

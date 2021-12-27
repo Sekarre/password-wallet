@@ -27,19 +27,19 @@ public abstract class PasswordMapper {
     @Named("encryptPassword")
     @AfterMapping
     public void encryptPassword(PasswordDto passwordDto, @MappingTarget Password password) {
-        password.setPassword(EncryptionUtil.encryptPassword(passwordDto.getPassword(), LoggedUserHelper.getCurrentUser().getKey()));
+        password.setPassword(EncryptionUtil.encryptPassword(passwordDto.getPassword(), LoggedUserHelper.getCurrentUser().getPassword()));
     }
 
     @Named("encryptPasswordCreate")
     @AfterMapping
     public void encryptPassword(PasswordCreateDto passwordDto, @MappingTarget Password password) {
-        password.setPassword(EncryptionUtil.encryptPassword(passwordDto.getPassword(), LoggedUserHelper.getCurrentUser().getKey()));
+        password.setPassword(EncryptionUtil.encryptPassword(passwordDto.getPassword(), LoggedUserHelper.getCurrentUser().getPassword()));
     }
 
     @Named("decryptPassword")
     @AfterMapping
     public void decryptPassword(Password password, @MappingTarget PasswordDto passwordDto) {
-        passwordDto.setPassword(EncryptionUtil.decryptPassword(password.getPassword(), LoggedUserHelper.getCurrentUser().getKey()));
+        passwordDto.setPassword(EncryptionUtil.decryptPassword(password.getPassword(), LoggedUserHelper.getCurrentUser().getPassword()));
     }
 
     @Named("randomizePassword")

@@ -32,7 +32,7 @@ class AuthServiceTest extends SecurityContextMockSetup {
     UserLoginEventService userLoginEventService;
 
     @Mock
-    UserRepository userRepository;
+    UserService userService;
 
     @Mock
     JwtTokenUtil jwtTokenUtil;
@@ -53,7 +53,7 @@ class AuthServiceTest extends SecurityContextMockSetup {
     public void setUpSecurityContext() {
         super.setUpSecurityContext();
         MockitoAnnotations.openMocks(this);
-        authService = new AuthServiceImpl(userLoginInfoService, userLoginEventService, accountLockService, userRepository, jwtTokenUtil, userMapper, userLoginInfoMapper);
+        authService = new AuthServiceImpl(userLoginInfoService, userLoginEventService, accountLockService, userService, jwtTokenUtil, userMapper, userLoginInfoMapper);
 
         user = buildDefaultUserMock();
     }
@@ -62,24 +62,24 @@ class AuthServiceTest extends SecurityContextMockSetup {
     void should_get_token() {
         //given
         UserCredentials userCredentials = buildUserCredentialsMock();
-        when(userRepository.findByLoginAndPassword(any(), any())).thenReturn(java.util.Optional.ofNullable(user));
-        when(userRepository.findByLogin(any())).thenReturn(java.util.Optional.ofNullable(user));
+        when(userService.getOptionalUserByLoginAndPassword(any(), any())).thenReturn(java.util.Optional.ofNullable(user));
+        when(userService.getUserByLogin(any())).thenReturn(user);
 
         //when
         TokenResponse token = authService.getToken(userCredentials);
 
         //then
         assertNotNull(token);
-        verify(userRepository, times(1)).findByLogin(userCredentials.getLogin());
-        verify(userRepository, times(1)).findByLoginAndPassword(any(), any());
+        verify(userService, times(1)).getUserByLogin(userCredentials.getLogin());
+        verify(userService, times(1)).getOptionalUserByLoginAndPassword(any(), any());
     }
 
     @Test
     void should_get_authenticated_user_if_correct_user_credentials() {
         //given
         UserCredentials userCredentials = buildUserCredentialsMock();
-        when(userRepository.findByLoginAndPassword(any(), any())).thenReturn(java.util.Optional.ofNullable(user));
-        when(userRepository.findByLogin(any())).thenReturn(java.util.Optional.ofNullable(user));
+        when(userService.getOptionalUserByLoginAndPassword(any(), any())).thenReturn(java.util.Optional.ofNullable(user));
+        when(userService.getUserByLogin(any())).thenReturn(user);
 
         //when
         User authenticatedUser = authService.getAuthenticatedUser(userCredentials);
@@ -87,8 +87,8 @@ class AuthServiceTest extends SecurityContextMockSetup {
         //then
         assertNotNull(authenticatedUser);
         assertEquals(user, authenticatedUser);
-        verify(userRepository, times(1)).findByLogin(userCredentials.getLogin());
-        verify(userRepository, times(1)).findByLoginAndPassword(any(), any());
+        verify(userService, times(1)).getUserByLogin(userCredentials.getLogin());
+        verify(userService, times(1)).getOptionalUserByLoginAndPassword(any(), any());
     }
 
     @Test
@@ -114,8 +114,8 @@ class AuthServiceTest extends SecurityContextMockSetup {
                 .newPassword("password2")
                 .currentPassword("password")
                 .build();
-        when(userRepository.findByLogin(any())).thenReturn(java.util.Optional.ofNullable(user));
-        when(userRepository.findByLoginAndPassword(any(), any())).thenReturn(java.util.Optional.ofNullable(user));
+        when(userService.getUserByLogin(any())).thenReturn(user);
+        when(userService.getOptionalUserByLoginAndPassword(any(), any())).thenReturn(java.util.Optional.ofNullable(user));
         when(jwtTokenUtil.generateAccessToken(any())).thenReturn(tokenValue);
 
         //when
@@ -123,8 +123,8 @@ class AuthServiceTest extends SecurityContextMockSetup {
 
         //then
         assertNotNull(token);
-        verify(userRepository, times(1)).findByLoginAndPassword(any(), any());
-        verify(userRepository, times(1)).save(user);
+        verify(userService, times(1)).getOptionalUserByLoginAndPassword(any(), any());
+        verify(userService, times(1)).save(user);
     }
 
     @Test
@@ -133,14 +133,14 @@ class AuthServiceTest extends SecurityContextMockSetup {
         UserDto userDto = buildUserDtoMock();
         when(jwtTokenUtil.generateAccessToken(any())).thenReturn(tokenValue);
         when(userMapper.mapUserDtoToUser(any())).thenReturn(user);
-        when(userRepository.save(any())).thenReturn(user);
+        when(userService.save(any())).thenReturn(user);
 
         //when
         TokenResponse token = authService.createNewAccount(userDto);
 
         //then
         assertNotNull(token);
-        verify(userRepository, times(1)).save(user);
+        verify(userService, times(1)).save(user);
         verify(jwtTokenUtil, times(1)).generateAccessToken(user);
     }
 

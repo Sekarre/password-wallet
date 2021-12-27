@@ -7,6 +7,7 @@ import com.example.passwordwallet.domain.helper.UserLoginEventByIp;
 import java.util.List;
 
 public interface AuthService {
+
     TokenResponse getToken(UserCredentials userCredentials);
 
     User getAuthenticatedUser(UserCredentials userCredentials);

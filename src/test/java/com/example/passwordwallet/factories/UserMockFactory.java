@@ -15,7 +15,6 @@ public class UserMockFactory {
                 .password("password")
                 .passwordType(PasswordType.HMAC)
                 .salt("salt")
-                .key("key")
                 .build();
     }
 

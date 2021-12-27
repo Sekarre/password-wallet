@@ -22,11 +22,6 @@ public class AuthController {
         return ResponseEntity.ok(authService.getToken(userCredentials));
     }
 
-    @PostMapping("/key")
-    public ResponseEntity<TokenResponse> setPasswordKey(@Valid @RequestBody UserPasswordKeyDto userPasswordKeyDto) {
-        return ResponseEntity.ok(authService.setPasswordKey(userPasswordKeyDto));
-    }
-
     @PostMapping("/password-change")
     public ResponseEntity<TokenResponse> changePassword(@RequestBody @Valid UserPasswordChangeDto userPasswordChangeDto) {
         return ResponseEntity.ok(authService.changePassword(userPasswordChangeDto));

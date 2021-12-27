@@ -28,6 +28,9 @@ public class User {
     @NotBlank
     private String password;
 
+    @NotBlank
+    private String email;
+
     private String salt;
 
     @Enumerated(EnumType.STRING)
@@ -36,9 +39,10 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Password> passwords;
 
+    @OneToMany(mappedBy = "sharedToUser")
+    private List<SharedPassword> passwordsSharedToUser;
+
     @OneToOne(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.REMOVE})
     private UserLoginInfo userLoginInfo;
 
-    @Transient
-    private String key;
 }
