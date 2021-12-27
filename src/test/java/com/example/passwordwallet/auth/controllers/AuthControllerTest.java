@@ -60,18 +60,7 @@ class AuthControllerTest {
 
     @Test
     void should_set_password_key() throws Exception {
-        //given
-        when(authService.setPasswordKey(any())).thenReturn(tokenResponse);
-        UserPasswordKeyDto userPasswordKeyDto = UserMockFactory.buildUserPasswordKeyDtoMock();
-        byte[] content = TestUtil.convertObjectToJsonBytes(userPasswordKeyDto);
 
-        //when + then
-        mockMvc.perform(post(BASE_URL + "key")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.token").value(tokenResponse.getToken()));
-        verify(authService, times(1)).setPasswordKey(any());
     }
 
     @Test
