@@ -6,5 +6,6 @@ import org.mapstruct.Mapper;
 
 @Mapper
 public abstract class UserLoginEventMapper {
+
     public abstract UserLoginEventDto mapUserLoginEventToUserLoginEventDto(UserLoginEvent userLoginEvent);
 }
